@@ -11,6 +11,8 @@ var data = [
             [5.5,"Bangalore","IST UTC+5.5",true],
             [1.0,"Europe","CET UTC+1",true],
             [0.0,"United Kingdom","GMT UTC",true],
+            [-5.0,"New York","EST UTC-5",true],
+            [-5.0,"Austin","CST UTC-6",true],
             [-7.0,"Denver","MST UTC-7",true],
             [-8.0,"San Francisco","PST UTC-8",true]
         ];
