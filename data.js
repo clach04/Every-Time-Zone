@@ -9,12 +9,12 @@ var data = [
             [11.0,"Sydney","EST UTC+11",true],
             [8.0,"Singapore","SGT UTC+8",true],
             [5.5,"Bangalore","IST UTC+5.5",true],
-            // Below are Winter time, NOT Summer (DST) time
+            // Below are Summer (DST) time, NOT Winter time
             // TODO either update a few times a year, or use DST aware rules
-            [1.0,"Europe","CET UTC+1",true],
-            [0.0,"United Kingdom","GMT UTC",true],
-            [-5.0,"New York","EST UTC-5",true],
-            [-6.0,"Austin","CST UTC-6",true],
-            [-7.0,"Denver","MST UTC-7",true],
-            [-8.0,"San Francisco","PST UTC-8",true]
+            [2.0,"Europe","CEST UTC+2",true],
+            [1.0,"United Kingdom","BST UTC+1",true],
+            [-4.0,"New York","EDT UTC-6",true],
+            [-5.0,"Austin","CDT UTC-7",true],
+            [-6.0,"Denver","MDT UTC-8",true],
+            [-7.0,"San Francisco","PDT UTC-9",true]
         ];
