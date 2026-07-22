@@ -21,33 +21,49 @@ var posixTZ = (function() {
         var parts = tz.split(',');
         var localTZ = parts[0];
 
-        var LOCAL_TZ_RE = /(\w+)([+-]?\d+)(\w+([+-]?\d+)?)?/;
-        var match = LOCAL_TZ_RE.exec(localTZ);
+        // Parse std abbreviation (letters only)
+        var abbrMatch = /^([A-Za-z]+)/.exec(localTZ);
+        if (!abbrMatch) return null;
+        result.stdAbbr = abbrMatch[1];
 
-        if (!match) {
-            return null;
+        var rest = localTZ.slice(abbrMatch[1].length);
+
+        // Parse std offset: [+|-]digits[:digits]
+        var offsetMatch = /^([+-]?\d+(:\d+)?)/.exec(rest);
+        if (offsetMatch) {
+            result.stdOffset = parseOffset(offsetMatch[1]);
+            rest = rest.slice(offsetMatch[0].length);
         }
 
-        result.stdAbbr = match[1];
-        result.stdOffset = match[2] ? parseOffset(match[2]) : 0;
+        // If anything remains, it's dst abbreviation + optional offset
+        if (rest.length > 0) {
+            var dstAbbrMatch = /^([A-Za-z]+)/.exec(rest);
+            if (dstAbbrMatch) {
+                result.dst = true;
+                result.dstAbbr = dstAbbrMatch[1];
+                rest = rest.slice(dstAbbrMatch[1].length);
 
-        if (match[3]) {
-            result.dst = true;
-            result.dstAbbr = match[3];
-            result.dstOffset = match[4] ? parseOffset(match[4]) : result.stdOffset + 60;
-            result.dstStart = parseTransition(parts[1]);
-            result.dstEnd = parseTransition(parts[2]);
+                var dstOffsetMatch = /^([+-]?\d+(:\d+)?)/.exec(rest);
+                if (dstOffsetMatch) {
+                    result.dstOffset = parseOffset(dstOffsetMatch[1]);
+                } else {
+                    result.dstOffset = result.stdOffset + 60;
+                }
+
+                result.dstStart = parseTransition(parts[1]);
+                result.dstEnd = parseTransition(parts[2]);
+            }
         }
 
         return result;
     }
 
     function parseOffset(offset) {
-        var hours = Number(offset);
-        if (hours) {
-            hours *= -1;
-        }
-        return hours * 60;
+        var parts = offset.split(':');
+        var hours = Number(parts[0]);
+        var minutes = parts[1] ? Number(parts[1]) : 0;
+        var total = hours * 60 + (hours >= 0 ? minutes : -minutes);
+        return -total;
     }
 
     function parseTransition(transition) {
