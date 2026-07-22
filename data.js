@@ -1,7 +1,7 @@
 
 // POSIX TZ strings for each city.
 // Format: [posixTZ, cityName, abbrev, selected]
-// abbrev is static for now (Option B). TODO: generate dynamically from posixTZ using posixTZ.getAbbr()
+// abbrev is now unused — labels are generated dynamically (see getLabelForRow in everytimezone.js)
 var data = [
     ["NZST-12NZDT,M9.5.0,M4.1.0", "Auckland", "NZ", true],
     ["AEST-10AEDT,M10.1.0,M4.1.0", "Sydney", "AUS", true],

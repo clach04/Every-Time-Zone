@@ -6,6 +6,15 @@
     function getOffsetForRow(row, date) {
         return posixTZ.getOffset(row[0], date) / 60;
     }
+
+    // Generate display label: "PST UTC-8" or "PDT UTC-7"
+    function getLabelForRow(row, date) {
+        var abbr = posixTZ.getAbbr(row[0], date);
+        var offsetH = getOffsetForRow(row, date);
+        var sign = offsetH >= 0 ? '+' : '';
+        var offsetStr = offsetH % 1 === 0 ? offsetH : offsetH;
+        return abbr + ' UTC' + sign + offsetStr;
+    }
     v = [], q = 0, bt = function(e) {
         var t, n, r, i, s;
         e === 0 && (e = 65535), t = 0, v = [], s = [];
@@ -54,7 +63,7 @@
         i = function() {
             var t, n, r, i, s;
             r = e("select_timezones"), t = -1;
-            for (i = 0, s = data.length; i < s; i++) n = data[i], r.appendChild(new Option("" + n[1] + " (" + n[2] + ")", t += 1, !1, n[3]));
+            for (i = 0, s = data.length; i < s; i++) n = data[i], r.appendChild(new Option("" + n[1] + " (" + getLabelForRow(n, w || new Date()) + ")", t += 1, !1, n[3]));
             return r.onchange = function() {
                 var e, t, n, i, s, o;
                 e = 0, n = 0, i = function(t) {
@@ -156,7 +165,7 @@
                 gradient: C(offset, offset - 48 + q / 60)
             }]), ut.push({
                 offset: offset
-            }), x(o[i][1].left, o[i][1].top, o[i][1].gradient), x(o[i][2].left, o[i][2].top, o[i][2].gradient), x(o[i][3].left, o[i][3].top, o[i][3].gradient), f += "<div style='left:" + _ + "px;top:" + (u - 2) + "px'>" + e[1] + " <small>" + e[2] + "</small></div>", s += "<div id='time_" + i + "' style='top:" + (u - 2) + "px'></div>", r += "<div style='left:" + o[i][1].left + "px;top:" + o[i][1].top + "px;width:" + a + "px'>\n  " + T(w.addDays(-1)) + "\n</div>\n<div style='left:" + o[i][2].left + "px;top:" + o[i][2].top + "px;width:" + a + "px'>\n  " + T(w.addDays(0)) + "\n</div>\n<div style='left:" + o[i][3].left + "px;top:" + o[i][3].top + "px;width:" + a + "px'>\n  " + T(w.addDays(1)) + "\n</div>", i += 1
+            }), x(o[i][1].left, o[i][1].top, o[i][1].gradient), x(o[i][2].left, o[i][2].top, o[i][2].gradient), x(o[i][3].left, o[i][3].top, o[i][3].gradient), f += "<div style='left:" + _ + "px;top:" + (u - 2) + "px'>" + e[1] + " <small>" + getLabelForRow(e, w) + "</small></div>", s += "<div id='time_" + i + "' style='top:" + (u - 2) + "px'></div>", r += "<div style='left:" + o[i][1].left + "px;top:" + o[i][1].top + "px;width:" + a + "px'>\n  " + T(w.addDays(-1)) + "\n</div>\n<div style='left:" + o[i][2].left + "px;top:" + o[i][2].top + "px;width:" + a + "px'>\n  " + T(w.addDays(0)) + "\n</div>\n<div style='left:" + o[i][3].left + "px;top:" + o[i][3].top + "px;width:" + a + "px'>\n  " + T(w.addDays(1)) + "\n</div>", i += 1
         };
         for (h = 0, d = v.length; h < d; h++) n = v[h], c(n);
         L("timezones", f), L("dates", r), L("times", s), i = 0, g = [];

@@ -158,8 +158,14 @@ var posixTZ = (function() {
             var dstStart = transitionToDate(year, parsed.dstStart);
             var dstEnd = transitionToDate(year, parsed.dstEnd);
 
-            if (date >= dstStart && date < dstEnd) {
-                return parsed.dstAbbr;
+            if (parsed.dstStart.month < parsed.dstEnd.month) {
+                if (date >= dstStart && date < dstEnd) {
+                    return parsed.dstAbbr;
+                }
+            } else {
+                if (date >= dstStart || date < dstEnd) {
+                    return parsed.dstAbbr;
+                }
             }
         }
 
