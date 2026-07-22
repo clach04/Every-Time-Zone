@@ -1,0 +1,149 @@
+// Zero-dependency POSIX timezone string parser and offset calculator.
+// Parses POSIX TZ strings like "PST8PDT,M3.2.0,M11.1.0" and computes
+// UTC offset for any given Date.
+//
+// Based on posixtz by jdiamond (MIT license).
+// https://github.com/jdiamond/posixtz
+
+var posixTZ = (function() {
+
+    function parse(tz) {
+        var result = {
+            stdAbbr: null,
+            stdOffset: 0,
+            dst: false,
+            dstAbbr: null,
+            dstOffset: null,
+            dstStart: null,
+            dstEnd: null
+        };
+
+        var parts = tz.split(',');
+        var localTZ = parts[0];
+
+        var LOCAL_TZ_RE = /(\w+)([+-]?\d+)(\w+([+-]?\d+)?)?/;
+        var match = LOCAL_TZ_RE.exec(localTZ);
+
+        if (!match) {
+            return null;
+        }
+
+        result.stdAbbr = match[1];
+        result.stdOffset = match[2] ? parseOffset(match[2]) : 0;
+
+        if (match[3]) {
+            result.dst = true;
+            result.dstAbbr = match[3];
+            result.dstOffset = match[4] ? parseOffset(match[4]) : result.stdOffset + 60;
+            result.dstStart = parseTransition(parts[1]);
+            result.dstEnd = parseTransition(parts[2]);
+        }
+
+        return result;
+    }
+
+    function parseOffset(offset) {
+        var hours = Number(offset);
+        if (hours) {
+            hours *= -1;
+        }
+        return hours * 60;
+    }
+
+    function parseTransition(transition) {
+        if (!transition) return null;
+
+        if (transition[0] === 'M') {
+            var parts = transition.slice(1).split('/');
+            var dateParts = parts[0].split('.');
+
+            var time = { hour: 2, minute: 0, second: 0 };
+
+            if (parts[1]) {
+                var timeParts = parts[1].split(':');
+                time.hour = Number(timeParts[0]);
+                time.minute = timeParts[1] ? Number(timeParts[1]) : 0;
+                time.second = timeParts[2] ? Number(timeParts[2]) : 0;
+            }
+
+            return {
+                month: Number(dateParts[0]),
+                week: Number(dateParts[1]),
+                day: Number(dateParts[2]),
+                hour: time.hour,
+                minute: time.minute,
+                second: time.second
+            };
+        }
+
+        // TODO: support Julian day (Jn) and zero-based Julian day (n) formats
+        return null;
+    }
+
+    function transitionToDate(year, t) {
+        var jsMonth = t.month - 1;
+        var dt = new Date(Date.UTC(year, jsMonth, 1));
+
+        // Find the first occurrence of the target weekday
+        while (dt.getUTCDay() !== t.day) {
+            dt.setUTCDate(dt.getUTCDate() + 1);
+        }
+
+        // Move to the Nth occurrence
+        if (t.week > 1) {
+            dt.setUTCDate(dt.getUTCDate() + (t.week - 1) * 7);
+            // If we rolled into next month, step back to last occurrence
+            if (dt.getUTCMonth() !== jsMonth) {
+                dt.setUTCDate(dt.getUTCDate() - 7);
+            }
+        }
+
+        dt.setUTCHours(t.hour, t.minute, t.second);
+        return dt;
+    }
+
+    // Returns offset in minutes from UTC for a given Date and POSIX TZ string.
+    function getOffset(posixTZ, date) {
+        var dt = new Date(date.getTime());
+        var parsed = parse(posixTZ);
+
+        if (!parsed) return 0;
+
+        if (parsed.dst) {
+            var year = dt.getUTCFullYear();
+            var dstStart = transitionToDate(year, parsed.dstStart);
+            var dstEnd = transitionToDate(year, parsed.dstEnd);
+
+            if (dt >= dstStart && dt < dstEnd) {
+                return parsed.dstOffset;
+            }
+        }
+
+        return parsed.stdOffset;
+    }
+
+    // Returns the timezone abbreviation (e.g., "PST" or "PDT") for a given Date.
+    function getAbbr(posixTZ, date) {
+        var parsed = parse(posixTZ);
+        if (!parsed) return '';
+
+        if (parsed.dst) {
+            var year = date.getUTCFullYear();
+            var dstStart = transitionToDate(year, parsed.dstStart);
+            var dstEnd = transitionToDate(year, parsed.dstEnd);
+
+            if (date >= dstStart && date < dstEnd) {
+                return parsed.dstAbbr;
+            }
+        }
+
+        return parsed.stdAbbr;
+    }
+
+    return {
+        parse: parse,
+        getOffset: getOffset,
+        getAbbr: getAbbr
+    };
+
+})();

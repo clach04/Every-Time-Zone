@@ -1,20 +1,16 @@
 
-// used as input to Option https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement/Option
-// var optionElementReference = new Option(text, value, defaultSelected, selected);
-// Option("" + n[1] + " (" + n[2] + ")", t += 1, !1, n[3])
-// that's where potential flag look up could occur - use emjoi...
-// not sure last column needed at all- no dynamic editing support of list
+// POSIX TZ strings for each city.
+// Format: [posixTZ, cityName, abbrev, selected]
+// abbrev is static for now (Option B). TODO: generate dynamically from posixTZ using posixTZ.getAbbr()
 var data = [
-            [13.0,"Auckland","NZDT UTC+13",true],
-            [11.0,"Sydney","EST UTC+11",true],
-            [8.0,"Singapore","SGT UTC+8",true],
-            [5.5,"Bangalore","IST UTC+5.5",true],
-            // Below are Summer (DST) time, NOT Winter time
-            // TODO either update a few times a year, or use DST aware rules
-            [2.0,"Europe","CEST UTC+2",true],
-            [1.0,"United Kingdom","BST UTC+1",true],
-            [-4.0,"New York","EDT UTC-6",true],
-            [-5.0,"Austin","CDT UTC-7",true],
-            [-6.0,"Denver","MDT UTC-8",true],
-            [-7.0,"San Francisco","PDT UTC-9",true]
-        ];
+    ["NZST-12NZDT,M9.5.0,M4.1.0", "Auckland", "NZ", true],
+    ["AEST-10AEDT,M10.1.0,M4.1.0", "Sydney", "AUS", true],
+    ["SGT-8", "Singapore", "SGT", true],
+    ["IST-5:30", "Bangalore", "IST", true],
+    ["CET-1CEST,M3.5.0,M10.5.0/3", "Europe", "CET", true],
+    ["GMT0BST,M3.5.0,M10.5.0", "United Kingdom", "UK", true],
+    ["EST5EDT,M3.2.0,M11.1.0", "New York", "US East", true],
+    ["CST6CDT,M3.2.0,M11.1.0", "Austin", "US Central", true],
+    ["MST7MDT,M3.2.0,M11.1.0", "Denver", "US Mountain", true],
+    ["PST8PDT,M3.2.0,M11.1.0", "San Francisco", "US Pacific", true]
+];
