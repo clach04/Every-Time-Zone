@@ -130,8 +130,18 @@ var posixTZ = (function() {
             var dstStart = transitionToDate(year, parsed.dstStart);
             var dstEnd = transitionToDate(year, parsed.dstEnd);
 
-            if (dt >= dstStart && dt < dstEnd) {
-                return parsed.dstOffset;
+            // Northern hemisphere: DST start < DST end (e.g., Mar-Nov)
+            // Southern hemisphere: DST start > DST end (e.g., Oct-Apr, spans year boundary)
+            if (parsed.dstStart.month < parsed.dstEnd.month) {
+                // Northern: standard check
+                if (dt >= dstStart && dt < dstEnd) {
+                    return parsed.dstOffset;
+                }
+            } else {
+                // Southern: DST runs from dstStart to year end, then Jan 1 to dstEnd
+                if (dt >= dstStart || dt < dstEnd) {
+                    return parsed.dstOffset;
+                }
             }
         }
 
