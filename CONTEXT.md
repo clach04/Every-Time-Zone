@@ -23,3 +23,7 @@ A fixed UTC offset that does not change with seasons. Singapore (`SGT-8`) and Ba
 ## Canvas Rendering
 
 The timeline bars are drawn on an HTML5 canvas element. Each city's position on the timeline is computed from its UTC offset relative to the current time.
+
+## Display Label
+
+A text label shown next to each city name on the timeline and in the dropdown selector. Format: `<abbreviation> UTC<sign><offset>` — for example, `PDT UTC-7` or `IST UTC+5.5`. The label is generated dynamically from the POSIX TZ string and the current date, so it updates automatically when DST transitions occur.
