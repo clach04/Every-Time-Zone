@@ -5,6 +5,7 @@
 // that's where potential flag look up could occur - use emjoi...
 // not sure last column needed at all- no dynamic editing support of list
 var data = [
+            // TZ Offset
             [13.0,"Auckland","NZDT UTC+13",true],
             [11.0,"Sydney","EST UTC+11",true],
             [8.0,"Singapore","SGT UTC+8",true],
