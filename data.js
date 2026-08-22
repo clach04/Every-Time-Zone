@@ -4,7 +4,8 @@
 // abbrev is now unused — labels are generated dynamically (see getLabelForRow in everytimezone.js)
 var data = [
     ["NZST-12NZDT,M9.5.0,M4.1.0", "Auckland", "NZ", true],
-    ["AEST-10AEDT,M10.1.0,M4.1.0", "Sydney", "AUS", true],
+    ["AEST-10AEDT,M10.1.0,M4.1.0", "Sydney (Brisbane, Queensland)", "AUS", true],
+    ["UTC-8", " Perth, Western Australia", "AUS", true],
     ["SGT-8", "Singapore", "SGT", true],
     ["IST-5:30", "Bangalore", "IST", true],
     ["CET-1CEST,M3.5.0,M10.5.0/3", "Europe", "CET", true],
